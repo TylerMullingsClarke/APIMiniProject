@@ -2,7 +2,7 @@
 
 ## Table of Contents
 
-1. [How the project works](https://github.com/TylerMullingsClarke/APIMiniProject#Project-Outline)
+1. [Project Outline](https://github.com/TylerMullingsClarke/APIMiniProject#Project-Outline)
     - To-Be Added
     - To-Be Added
 1. [Daily Report](https://github.com/TylerMullingsClarke/APIMiniProject#Daily-Report)
