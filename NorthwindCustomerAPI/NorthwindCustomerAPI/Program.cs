@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using NorthwindCustomerAPI.Models;
+
 namespace NorthwindCustomerAPI
 {
     public class Program
@@ -13,11 +16,19 @@ namespace NorthwindCustomerAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<NorthwindContext>(opt => opt.UseSqlServer(builder.Configuration["default"]));
+
+            builder.Services.AddControllersWithViews()
+                .AddNewtonsoftJson(options => 
+                    options.SerializerSettings.ReferenceLoopHandling = 
+                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
+                app.UseDeveloperExceptionPage();
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
