@@ -62,12 +62,13 @@
 
 ### Day 1
 
--Bootstraped base project: including controller, classes, scaffolding ect
--constructed personas, user stories and definition of done
+- Bootstraped base project: including controller, classes, scaffolding ect
+- Constructed personas, user stories and definition of done
 
 ### Day 2
 
--Added in CRUD operations for customers to the CustomerController class  
+- Added in CRUD operations for customers to the CustomerController class  
+- Implemented services  
 
 ### Day 3
 
