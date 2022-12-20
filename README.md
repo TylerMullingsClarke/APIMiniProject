@@ -27,12 +27,12 @@
     -POST /api/Customers
         adds customer with new unique id with the data in the body of the request.
         The following values are valid in the body of the request:
-            CustomerId - new unqiue ID for the customer - typed as a string at most 5 character long
+            CustomerId - new unqiue ID for the Customer - typed as a string at most 5 characters long
             ContactName - Name of the customer
             CompanyName - Name of the Company Customer works for
             ContactTitle  - Position of the Customer at the company they work for
             PostalCode - Postcode of the Customer
-            Address - Adress of the customer
+            Address - Address of the customer
             City - City the customer lives/works in
             Country - Country the Customer lives/works in
             Phone - Customers contact phone number 
@@ -43,12 +43,12 @@
     -PUT /api/Customers/{id}
         updates customer with DTO id matching id with the data in the body of the request, null values are kept the same.
         The following values are valid in the body of the request:
-            CustomerId - new unqiue ID for the customer - typed as a string at most 5 character long
+            CustomerId - new unqiue ID for the Customer - typed as a string at most 5 characters long
             ContactName - Name of the customer
             CompanyName - Name of the Company Customer works for
             ContactTitle  - Position of the Customer at the company they work for
             PostalCode - Postcode of the Customer
-            Address - Adress of the customer
+            Address - Address of the customer
             City - City the customer lives/works in
             Country - Country the Customer lives/works in
             Phone - Customers contact phone number 
