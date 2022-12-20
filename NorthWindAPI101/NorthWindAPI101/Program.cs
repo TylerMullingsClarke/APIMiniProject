@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using NorthwindCustomerAPI.Models;
+using NorthWindAPI101.Models;
 
-namespace NorthwindCustomerAPI
+namespace NorthWindAPI101
 {
     public class Program
     {
@@ -16,12 +16,14 @@ namespace NorthwindCustomerAPI
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddDbContext<NorthwindContext>(opt => opt.UseSqlServer(builder.Configuration["default"]));
+            builder.Services.AddDbContext<NorthwindContext>(
+                opt => opt.UseSqlServer(builder.Configuration["default"]));
 
             builder.Services.AddControllersWithViews()
-                .AddNewtonsoftJson(options => 
-                    options.SerializerSettings.ReferenceLoopHandling = 
-                    Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+                .AddNewtonsoftJson(
+                options => options.SerializerSettings.ReferenceLoopHandling =
+                Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
 
             var app = builder.Build();
 

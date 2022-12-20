@@ -5,11 +5,10 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NorthwindCustomerAPI.Models;
-using NorthwindCustomerAPI.Models.DTO;
-using NorthwindCustomerAPI.Models.Services;
+using NorthWindAPI101.Models;
+using NorthWindAPI101.Models.DTO;
 
-namespace NorthwindCustomerAPI.Controllers
+namespace NorthWindAPI101.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,13 +21,26 @@ namespace NorthwindCustomerAPI.Controllers
             _context = context;
         }
 
-        // GET: api/Customers
+        // GET: api/Customers // Old version
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
+        //{
+        //    return await _context.Customers.ToListAsync();
+        //}
+
+        // GET: api/Customers // Updated version
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
         {
-            var customers = await _context.Customers.Include(inc=>inc.Orders).Select(sel=>Utils.CustomerToDTO(sel)).ToListAsync();
-            return customers;
+            var customers = await _context.Customers
+                //.Include(s => s.CustomerId)
+                .Select(x => Utils.CustomerToDTO(x))
+                .ToListAsync();
+
+                return customers;
         }
+
+
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
