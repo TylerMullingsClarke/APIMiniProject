@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NorthWindAPI101.Models;
 using NorthWindAPI101.Models.DTO;
+using NorthWindAPI101.Models.Services;
 
 namespace NorthWindAPI101.Controllers
 {
@@ -15,32 +16,22 @@ namespace NorthWindAPI101.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly NorthwindContext _context;
+        private readonly ICustomerService _service;
 
-        public CustomersController(NorthwindContext context)
+        public CustomersController(ICustomerService service, NorthwindContext context)
         {
+            _service = service;
             _context = context;
         }
-
-        // GET: api/Customers // Old version
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
-        //{
-        //    return await _context.Customers.ToListAsync();
-        //}
 
         // GET: api/Customers // Updated version
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
         {
-            var customers = await _context.Customers
-                //.Include(s => s.CustomerId)
-                .Select(x => Utils.CustomerToDTO(x))
-                .ToListAsync();
+            var customers = await Task.Run(()=>_service.GetCustomerDTOList());
 
             return customers;
         }
-
-
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
@@ -50,8 +41,8 @@ namespace NorthWindAPI101.Controllers
             {
                 return NotFound();
             }
-
-            var customer = await _context.Customers.Where(x => x.CustomerId == id).Select(sel => Utils.CustomerToDTO(sel)).FirstAsync();
+            
+            var customer = await Task.Run(() => _service.GetCustomerDTOById(id));
 
             return customer;
         }
@@ -63,7 +54,7 @@ namespace NorthWindAPI101.Controllers
         {
 
 
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await Task.Run(() => _service.GetCustomerById(id));
 
 
             if (id != customerDTO.CustomerId || customer == null)
@@ -85,7 +76,7 @@ namespace NorthWindAPI101.Controllers
 
             try
             {
-                await _context.SaveChangesAsync();
+                await Task.Run(() => _service.SaveCustomerChanges());
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -105,47 +96,50 @@ namespace NorthWindAPI101.Controllers
         // POST: api/Customers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<CustomerDTO>> PostCustomer(CustomerDTO customerDTO)
+        public async Task<ActionResult<CustomerDTO[]>> PostMultipleCustomer(CustomerDTO[] customerDTOs)
         {
-            Customer customer = new Customer
-            {
-                CustomerId = customerDTO.CustomerId,
-                ContactName = customerDTO.ContactName,
-                CompanyName = customerDTO.CompanyName,
-                ContactTitle = customerDTO.ContactTitle,
-                PostalCode = customerDTO.PostalCode,
-                Address = customerDTO.Address,
-                City = customerDTO.City,
-                Country = customerDTO.Country,
-                Phone = customerDTO.Phone,
-                Fax = customerDTO.Fax,
-                Region = customerDTO.Region
-            };
-            await _context.Customers.AddAsync(customer);
-            await _context.SaveChangesAsync();
+            Customer customer = new Customer { };
 
-            var customerExists = await _context.Customers.FindAsync(customer.CustomerId);
-            if (customerExists is null)
+            foreach (CustomerDTO cust in customerDTOs)
             {
-                return BadRequest();
+                customer.CustomerId = cust.CustomerId;
+                customer.ContactName = cust.ContactName;
+                customer.CompanyName = cust.CompanyName;
+                customer.ContactTitle = cust.ContactTitle;
+                customer.PostalCode = cust.PostalCode;
+                customer.Address = cust.Address;
+                customer.City = cust.City;
+                customer.Country = cust.Country;
+                customer.Phone = cust.Phone;
+                customer.Fax = cust.Fax;
+                customer.Region = cust.Region;
+
+                await Task.Run(()=>_service.CreateCustomer(customer));
+
+                var customerExists = await Task.Run(() => _service.GetCustomerById(customer.CustomerId));
+                if (customerExists is null)
+                {
+                    return BadRequest();
+                }
             }
-
-            customerDTO = await _context.Customers.Where(s => s.CustomerId == customer.CustomerId).Select(x => Utils.CustomerToDTO(x)).FirstAsync();
-            return CreatedAtAction(nameof(GetCustomer), new { id = customer.CustomerId }, customerDTO);
+            for (int i = 0; i < customerDTOs.Length; i++)
+            {
+                customerDTOs[i] = await Task.Run(() => _service.GetCustomerDTOById(customerDTOs[i].CustomerId));
+            }
+            return CreatedAtAction(nameof(GetCustomer), new { id = customer.CustomerId }, customerDTOs);
         }
 
         // DELETE: api/Customers/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCustomer(string id)
         {
-            var customer = await _context.Customers.FindAsync(id);
+            var customer = await Task.Run(() => _service.GetCustomerById(id));
             if (customer == null)
             {
                 return NotFound();
             }
 
-            _context.Customers.Remove(customer);
-            await _context.SaveChangesAsync();
+            await Task.Run(() => _service.RemoveCustomer(customer));
 
             return NoContent();
         }

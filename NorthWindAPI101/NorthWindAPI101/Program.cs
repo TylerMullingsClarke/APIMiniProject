@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using NorthWindAPI101.Models;
+using NorthWindAPI101.Models.Services;
 
 namespace NorthWindAPI101
 {
@@ -18,6 +19,8 @@ namespace NorthWindAPI101
 
             builder.Services.AddDbContext<NorthwindContext>(
                 opt => opt.UseSqlServer(builder.Configuration["default"]));
+
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
 
             builder.Services.AddControllersWithViews()
                 .AddNewtonsoftJson(
