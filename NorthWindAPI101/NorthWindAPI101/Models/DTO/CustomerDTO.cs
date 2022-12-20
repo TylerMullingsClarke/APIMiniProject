@@ -4,7 +4,6 @@
     {
         public CustomerDTO()
         {
-            Products = new List<ProductDTO>();
         }
 
         public string CustomerId { get; set; } = null!;
@@ -29,7 +28,6 @@
 
         public string? Fax { get; set; }
 
-        public ICollection<ProductDTO> Products { get;set; }
 
 
     }
