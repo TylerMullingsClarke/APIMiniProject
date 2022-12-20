@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NorthwindCustomerAPI.Models;
+using NorthwindCustomerAPI.Models.DTO;
+using NorthwindCustomerAPI.Models.Services;
 
 namespace NorthwindCustomerAPI.Controllers
 {
@@ -22,9 +24,10 @@ namespace NorthwindCustomerAPI.Controllers
 
         // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomers()
+        public async Task<ActionResult<IEnumerable<CustomerDTO>>> GetCustomers()
         {
-            return await _context.Customers.ToListAsync();
+            var customers = await _context.Customers.Include(inc=>inc.Orders).Select(sel=>Utils.CustomerToDTO(sel)).ToListAsync();
+            return customers;
         }
 
         // GET: api/Customers/5
