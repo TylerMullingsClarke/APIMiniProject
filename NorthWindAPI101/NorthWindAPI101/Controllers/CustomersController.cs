@@ -37,21 +37,21 @@ namespace NorthWindAPI101.Controllers
                 .Select(x => Utils.CustomerToDTO(x))
                 .ToListAsync();
 
-                return customers;
+            return customers;
         }
 
 
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Customer>> GetCustomer(string id)
+        public async Task<ActionResult<CustomerDTO>> GetCustomer(string id)
         {
-            var customer = await _context.Customers.FindAsync(id);
-
-            if (customer == null)
+            if (!CustomerExists(id))
             {
                 return NotFound();
             }
+
+            var customer = await _context.Customers.Where(x => x.CustomerId == id).Select(sel => Utils.CustomerToDTO(sel)).FirstAsync();
 
             return customer;
         }
@@ -59,14 +59,29 @@ namespace NorthWindAPI101.Controllers
         // PUT: api/Customers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(string id, Customer customer)
+        public async Task<IActionResult> PutCustomer(string id, CustomerDTO customerDTO)
         {
-            if (id != customer.CustomerId)
+
+
+            var customer = await _context.Customers.FindAsync(id);
+
+
+            if (id != customerDTO.CustomerId || customer == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(customer).State = EntityState.Modified;
+            customer.ContactName = customerDTO.ContactName ?? customer.ContactName;
+            customer.CompanyName = customerDTO.CompanyName ?? customer.CompanyName;
+            customer.ContactTitle = customerDTO.ContactTitle ?? customer.ContactTitle;
+            customer.PostalCode = customerDTO.PostalCode ?? customer.PostalCode;
+            customer.Address = customerDTO.Address ?? customer.Address;
+            customer.City = customerDTO.City ?? customer.City;
+            customer.Country = customerDTO.Country ?? customer.Country;
+            customer.Phone = customerDTO.Phone ?? customer.Phone;
+            customer.Fax = customerDTO.Fax ?? customer.Fax;
+            customer.Region = customerDTO.Region ?? customer.Region;
+
 
             try
             {
@@ -90,26 +105,33 @@ namespace NorthWindAPI101.Controllers
         // POST: api/Customers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
+        public async Task<ActionResult<CustomerDTO>> PostCustomer(CustomerDTO customerDTO)
         {
-            _context.Customers.Add(customer);
-            try
+            Customer customer = new Customer
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
+                CustomerId = customerDTO.CustomerId,
+                ContactName = customerDTO.ContactName,
+                CompanyName = customerDTO.CompanyName,
+                ContactTitle = customerDTO.ContactTitle,
+                PostalCode = customerDTO.PostalCode,
+                Address = customerDTO.Address,
+                City = customerDTO.City,
+                Country = customerDTO.Country,
+                Phone = customerDTO.Phone,
+                Fax = customerDTO.Fax,
+                Region = customerDTO.Region
+            };
+            await _context.Customers.AddAsync(customer);
+            await _context.SaveChangesAsync();
+
+            var customerExists = await _context.Customers.FindAsync(customer.CustomerId);
+            if (customerExists is null)
             {
-                if (CustomerExists(customer.CustomerId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest();
             }
 
-            return CreatedAtAction("GetCustomer", new { id = customer.CustomerId }, customer);
+            customerDTO = await _context.Customers.Where(s => s.CustomerId == customer.CustomerId).Select(x => Utils.CustomerToDTO(x)).FirstAsync();
+            return CreatedAtAction(nameof(GetCustomer), new { id = customer.CustomerId }, customerDTO);
         }
 
         // DELETE: api/Customers/5
