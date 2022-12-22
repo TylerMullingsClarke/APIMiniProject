@@ -16,6 +16,7 @@ namespace NorthWindAPI101.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerService _service;
+        private LinkGenerator _linkGenerator;
 
         public CustomersController(ICustomerService service)
         {
