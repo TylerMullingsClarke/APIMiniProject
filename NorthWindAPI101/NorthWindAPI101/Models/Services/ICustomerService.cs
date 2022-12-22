@@ -10,5 +10,6 @@ namespace NorthWindAPI101.Models.Services
         void CreateCustomer(Customer c);
         void SaveCustomerChanges();
         void RemoveCustomer(Customer c);
+        bool DoesCustomerExist(string id);
     }
 }

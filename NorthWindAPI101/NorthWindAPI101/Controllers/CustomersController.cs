@@ -15,14 +15,13 @@ namespace NorthWindAPI101.Controllers
     [ApiController]
     public class CustomersController : ControllerBase
     {
-        private readonly NorthwindContext _context;
         private readonly ICustomerService _service;
         private LinkGenerator _linkGenerator;
 
-        public CustomersController(ICustomerService service, NorthwindContext context)
+        public CustomersController(ICustomerService service)
         {
             _service = service;
-            _context = context;
+            
         }
 
         // GET: api/Customers // Updated version
@@ -42,7 +41,7 @@ namespace NorthWindAPI101.Controllers
             {
                 return NotFound();
             }
-            
+
             var customer = await Task.Run(() => _service.GetCustomerDTOById(id));
 
             return customer;
@@ -147,7 +146,7 @@ namespace NorthWindAPI101.Controllers
 
         private bool CustomerExists(string id)
         {
-            return _context.Customers.Any(e => e.CustomerId == id);
+            return _service.DoesCustomerExist(id);
         }
     }
 }

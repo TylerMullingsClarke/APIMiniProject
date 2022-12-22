@@ -48,5 +48,10 @@ namespace NorthWindAPI101.Models.Services
         {
             _context.SaveChanges();
         }
+
+        public bool DoesCustomerExist(string id)
+        {
+            return _context.Customers.Any(e => e.CustomerId == id);
+        }
     }
 }
