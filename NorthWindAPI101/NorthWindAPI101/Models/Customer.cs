@@ -27,5 +27,8 @@ public partial class Customer
 
     public string? Fax { get; set; }
 
-
+    public override string ToString()
+    {
+        return CustomerId;
+    }
 }

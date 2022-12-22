@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using NorthWindAPI101.Models;
+using NorthWindAPI101.Models.DTO;
 using NorthWindAPI101.Models.Services;
+using RiskFirst.Hateoas;
 
 namespace NorthWindAPI101
 {
@@ -26,6 +29,21 @@ namespace NorthWindAPI101
                 .AddNewtonsoftJson(
                 options => options.SerializerSettings.ReferenceLoopHandling =
                 Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+
+            
+
+
+
+
+            //builder.Services.AddLink(builder => builder
+            //        .AddPolicy<EmployeeDTO>(model =>
+            //        {
+            //            model.AddSelf(e => e.EmployeeId, "Shows employee info");
+            //            model.AddCustomPath(e => $"/api/employees/{e.EmployeeId}", "UpdateEmployee", method: HttpMethods.Put, message: "Update the details for an employee");
+            //            model.AddCustomPath(e => $"/api/employees/{e.EmployeeId}", "DeleteEmployee", method: HttpMethods.Delete, message: "Delete an employee from the database");
+            //            model.AddCustomPath(e => $"/api/employees/{e.EmployeeId}/photo", "GetEmployeePhoto", method: HttpMethods.Get, message: "Shows the employee's photo as a jpeg image");
+            //        }));
+
 
 
             var app = builder.Build();

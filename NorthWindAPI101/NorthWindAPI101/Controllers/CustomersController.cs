@@ -4,10 +4,16 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Graph;
 using NorthWindAPI101.Models;
 using NorthWindAPI101.Models.DTO;
 using NorthWindAPI101.Models.Services;
+using NPOI.SS.Formula.Functions;
+using NuGet.Protocol.Core.Types;
+using RiskFirst.Hateoas;
 
 namespace NorthWindAPI101.Controllers
 {
@@ -17,11 +23,15 @@ namespace NorthWindAPI101.Controllers
     {
         private readonly ICustomerService _service;
         private LinkGenerator _linkGenerator;
+        private readonly ILinksService _linksService;
 
-        public CustomersController(ICustomerService service)
+
+        public CustomersController(ICustomerService service, LinkGenerator linkGenerator, ILinksService linksService)
         {
             _service = service;
-            
+            _linkGenerator = linkGenerator;
+            _linksService = linksService;
+
         }
 
         // GET: api/Customers // Updated version
@@ -30,11 +40,12 @@ namespace NorthWindAPI101.Controllers
         {
             var customers = await Task.Run(()=>_service.GetCustomerDTOList());
 
+            
             return customers;
         }
 
         // GET: api/Customers/5
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetModelRoute")]
         public async Task<ActionResult<CustomerDTO>> GetCustomer(string id)
         {
             if (!CustomerExists(id))
@@ -43,8 +54,9 @@ namespace NorthWindAPI101.Controllers
             }
 
             var customer = await Task.Run(() => _service.GetCustomerDTOById(id));
-
+            await _linksService.AddLinksAsync(customer);
             return customer;
+            //return customer;
         }
 
         // PUT: api/Customers/5
@@ -148,5 +160,27 @@ namespace NorthWindAPI101.Controllers
         {
             return _service.DoesCustomerExist(id);
         }
+
+    //    private IEnumerable<Link> CreateLinksForCustomer(string id)
+    //    {
+    //        var links = new List<Link>
+    //{
+    //    new Link(_linkGenerator.GetUriByAction(HttpContext, nameof(GetCustomer), values: new { id }),
+    //    "self",
+    //    "GET"),
+    //    new Link(_linkGenerator.GetUriByAction(HttpContext, nameof(DeleteCustomer), values: new { id }),
+    //    "delete_customer",
+    //    "DELETE"),
+    //    new Link(_linkGenerator.GetUriByAction(HttpContext, nameof(PutCustomer), values: new { id }),
+    //    "update_customer",
+    //    "PUT")
+    //};
+    //        return links;
+    //    }
+
+
+
+
+
     }
 }
