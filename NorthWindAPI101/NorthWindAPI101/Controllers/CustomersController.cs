@@ -17,6 +17,7 @@ namespace NorthWindAPI101.Controllers
     {
         private readonly NorthwindContext _context;
         private readonly ICustomerService _service;
+        private LinkGenerator _linkGenerator;
 
         public CustomersController(ICustomerService service, NorthwindContext context)
         {
