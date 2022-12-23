@@ -4,10 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using NorthWindAPI101.Models;
 using NorthWindAPI101.Models.DTO;
 using NorthWindAPI101.Models.Services;
+using Sciensoft.Hateoas;
+using Sciensoft.Hateoas.Repositories;
+
+
 
 namespace NorthWindAPI101.Controllers
 {
@@ -16,12 +21,12 @@ namespace NorthWindAPI101.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerService _service;
-        private LinkGenerator _linkGenerator;
+
 
         public CustomersController(ICustomerService service)
         {
             _service = service;
-            
+
         }
 
         // GET: api/Customers // Updated version
@@ -43,10 +48,9 @@ namespace NorthWindAPI101.Controllers
             }
 
             var customer = await Task.Run(() => _service.GetCustomerDTOById(id));
-
             return customer;
+            //return customer;
         }
-
         // PUT: api/Customers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
