@@ -1,4 +1,6 @@
-﻿namespace NorthWindAPI101.Models.DTO
+﻿using RiskFirst.Hateoas.Models;
+
+namespace NorthWindAPI101.Models.DTO
 {
     public class CustomerDTO
     {
@@ -27,9 +29,6 @@
         public string? Phone { get; set; }
 
         public string? Fax { get; set; }
-
-
-
     }
 
 
