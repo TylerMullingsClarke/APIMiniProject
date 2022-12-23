@@ -39,7 +39,21 @@
             Fax - Customers Fax number
             Region - Region Customer lives/works in
     
-    
+    -POST /api/Customers
+        adds multiple customers if the body of the of the response contains an array of customerDTOs.
+        The following values are valid in the body of the request (Array of):
+            CustomerId - new unqiue ID for the Customer - typed as a string at most 5 characters long
+            ContactName - Name of the customer
+            CompanyName - Name of the Company Customer works for
+            ContactTitle  - Position of the Customer at the company they work for
+            PostalCode - Postcode of the Customer
+            Address - Address of the customer
+            City - City the customer lives/works in
+            Country - Country the Customer lives/works in
+            Phone - Customers contact phone number 
+            Fax - Customers Fax number
+            Region - Region Customer lives/works in
+
     -PUT /api/Customers/{id}
         updates customer with DTO id matching id with the data in the body of the request, null values are kept the same.
         The following values are valid in the body of the request:
@@ -67,11 +81,20 @@
 
 ### Day 2
 
-- Added in CRUD operations for customers to the CustomerController class  
+- Added in CRUD operations for customers to the CustomerController class
+- Service layer added
+- Postman scripts started
+- Hateoas Started
 
 ### Day 3
 
+- Multiple object CRUD operations completed
+- Hateoas continued
+- Postman almost done 
+
 ### Day 4
+
+- Mob programming on hateaos, completed at the end of the day.
 
 ### Day 5
 
