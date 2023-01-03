@@ -33,10 +33,9 @@ namespace NorthWindAPI101
             builder.Services.AddLink(builder => builder
                 .AddPolicy<CustomerDTO>(model =>
                 {
-                    model.AddSelf(c => c.CustomerId, "Shows Customer info");
-                    model.AddCustomPath(c => $"/api/customers/{c.CustomerId}", "UpdateCustomer", method: HttpMethods.Put, message: "Update the details for an Customer");
-                    model.AddCustomPath(c => $"/api/customer/{c.CustomerId}", "DeleteCustomer", method: HttpMethods.Delete, message: "Delete an customer from the database");
-                    //model.AddCustomPath(c => $"/api/customers/{c.CustomerId}/photo", "GetEmployeePhoto", method: HttpMethods.Get, message: "Shows the employee's photo as a jpeg image");
+                    model.AddSelf(c => c.CustomerId, "Shows the Customer info relatingg to their ID");
+                    model.AddCustomPath(c => $"/api/customers/{c.CustomerId}", "UpdateCustomer", method: HttpMethods.Put, message: "Update the details for an Customer in the database");
+                    model.AddCustomPath(c => $"/api/customer/{c.CustomerId}", "DeleteCustomer", method: HttpMethods.Delete, message: "Delete a customer from the database");
                 }));
 
             var app = builder.Build();
