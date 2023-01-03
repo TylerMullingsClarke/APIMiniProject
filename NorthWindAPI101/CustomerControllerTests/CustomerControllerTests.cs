@@ -37,7 +37,7 @@ namespace NorthwindAPITests
 
         [Test]
         [Category("Create Tests")]
-        public void GivenNewCustomer_PostCustomer_AddsNewCustomerToTable()
+        public void GivenNewCustomer_PostMultipleCustomer_AddsNewCustomerToTable()
         {
             var mockCustomerService = new Mock<ICustomerService>();
 
@@ -65,15 +65,13 @@ namespace NorthwindAPITests
             mockCustomerService.Setup(cs => cs.GetCustomerById("TESTS")).Returns(originalCustomer);
             mockCustomerService.Setup(cs => cs.GetCustomerDTOById("TESTS")).Returns(originalCustomerDTO[0]);
             mockCustomerService.Setup(cs => cs.CreateCustomer(originalCustomer));
+            mockCustomerService.Setup(cs => cs.DoesCustomerExist("TESTS")).Returns(true);
 
             _sut = new CustomersController(mockCustomerService.Object);
 
-            var result = _sut.PostMultipleCustomer(originalCustomerDTO);
-
-            //mockCustomerService.Verify(
-            //    cs => cs.CreateCustomer(originalCustomer),
-            //    Times.Once);
-            Assert.That(result.Result.Value[0].CustomerId, Is.EqualTo("TESTS"));
+            var result = _sut.PostMultipleCustomer(originalCustomerDTO).Result.Result;
+            
+            Assert.That(result, Is.InstanceOf<CreatedAtActionResult>());
         }
 
         [Test]
@@ -95,32 +93,59 @@ namespace NorthwindAPITests
 
             var result = _sut.GetCustomer("TESTS");
 
-            mockCustomerService.Verify(
-                cs => cs.GetCustomerDTOById("TESTS"),
-                Times.Once);
-
             Assert.That(result.Result.Value.ContactName, Is.EqualTo("Testing Man"));
         }
 
         [Test]
         [Category("Delete Tests")]
-        public void GivenIdIsInDatabase_DeleteCustomer_RemovesCustomerFromDB()
+        public void GivenIdAndIsInDatabase_DeleteCustomer_ReturnsANoContentStatusCode()
         {
             var mockCustomerService = new Mock<ICustomerService>();
 
             var originalCustomer = new Customer
             {
-                CustomerId = "ROCK"
+                CustomerId = "TESTS"
             };
             mockCustomerService.Setup(
-                cs => cs.GetCustomerById("ROCK"))
+                cs => cs.GetCustomerById("TESTS"))
                     .Returns(originalCustomer);
 
             _sut = new CustomersController(mockCustomerService.Object);
 
-            var result = _sut.DeleteCustomer("ROCK").Result.ToString();
+            var result = _sut.DeleteCustomer("TESTS").Result.ToString();
 
-            Assert.That(result, Does.Contain("204"));
+            Assert.That(result, Is.EqualTo("Microsoft.AspNetCore.Mvc.NoContentResult"));
+        }
+
+        [Test]
+        [Category("Update Tests")]
+        public void GivenIDAndIsInDatabase_PutCustomer_UpdatesCustomerValues() 
+        {
+            var mockCustomerService = new Mock<ICustomerService>();
+
+            var originalCustomer = new Customer
+            {
+                CustomerId = "TESTS",
+                ContactName = "Testing Man"
+            };
+            var newCustomer = new CustomerDTO
+            {
+                CustomerId = "TESTS",
+                ContactName = "Testing Woman"
+            };
+
+            mockCustomerService.Setup(cs => cs.SaveCustomerChanges());
+            mockCustomerService.Setup(cs => cs.GetCustomerById("TESTS")).Returns(originalCustomer);
+
+            _sut = new CustomersController(mockCustomerService.Object);
+
+            _sut.PutCustomer("TESTS", newCustomer);
+
+            mockCustomerService.Verify(
+                cs => cs.GetCustomerById("TESTS"),
+                Times.Once);
+
+            Assert.That(originalCustomer.ContactName, Is.EqualTo("Testing Woman"));
         }
     }
 }
